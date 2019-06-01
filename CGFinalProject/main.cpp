@@ -33,7 +33,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(1.2f, 100.0f, 2.0f);
 
 int main()
 {
@@ -78,26 +78,9 @@ int main()
 	Shader shader("simpleLight.vs", "simpleLight.fs");
 
 	Character man1("man/Male_Casual.fbx");
-	man1.scale = glm::vec3(0.1f, 0.1f, 0.1f);
-	//man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
-
-	//Character man2("man/Male_LongSleeve.fbx");
-	//man2.position = glm::vec3(-10.0f, 0.0f, 0.0f);
-
-	//Character man3("man/Male_Shirt.fbx");
-	//man3.position = glm::vec3(0.0f, 0.0f, 0.0f);
-
-	//Character man4("man/Male_Suit.fbx");
-	//man4.position = glm::vec3(10.0f, 0.0f, 0.0f);
-
-	//Character man5("man/Smooth_Male_Casual.fbx");
-	//man5.position = glm::vec3(20.0f, 0.0f, 0.0f);
+	man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
 
 	allCharacters.push_back(&man1);
-	//allCharacters.push_back(&man2);
-	//allCharacters.push_back(&man3);
-	//allCharacters.push_back(&man4);
-	//allCharacters.push_back(&man5);
 
 	// render loop
 	// -----------
