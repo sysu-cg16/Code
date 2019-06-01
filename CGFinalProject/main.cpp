@@ -35,8 +35,6 @@ float lastFrame = 0.0f;
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
-#define MESH_DEBUG
-
 int main()
 {
 	// glfw: initialize and configure
@@ -79,7 +77,7 @@ int main()
 	// ------------------------------------
 	Shader shader("simpleLight.vs", "simpleLight.fs");
 
-	Character man1("man/boblampclean.md5mesh");
+	Character man1("man/Male_Casual.fbx");
 	man1.scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	//man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
 
