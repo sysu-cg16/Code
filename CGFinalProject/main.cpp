@@ -7,11 +7,9 @@
 
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
-#include <learnopengl/model.h>
 
 #include <iostream>
 
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include "character.h"
 
@@ -36,6 +34,8 @@ float lastFrame = 0.0f;
 
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
+#define MESH_DEBUG
 
 int main()
 {
@@ -79,26 +79,27 @@ int main()
 	// ------------------------------------
 	Shader shader("simpleLight.vs", "simpleLight.fs");
 
-	Character man1("man/Male_Casual.fbx");
-	man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
+	Character man1("man/boblampclean.md5mesh");
+	man1.scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	//man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
 
-	Character man2("man/Male_LongSleeve.fbx");
-	man2.position = glm::vec3(-10.0f, 0.0f, 0.0f);
+	//Character man2("man/Male_LongSleeve.fbx");
+	//man2.position = glm::vec3(-10.0f, 0.0f, 0.0f);
 
-	Character man3("man/Male_Shirt.fbx");
-	man3.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	//Character man3("man/Male_Shirt.fbx");
+	//man3.position = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	Character man4("man/Male_Suit.fbx");
-	man4.position = glm::vec3(10.0f, 0.0f, 0.0f);
+	//Character man4("man/Male_Suit.fbx");
+	//man4.position = glm::vec3(10.0f, 0.0f, 0.0f);
 
-	Character man5("man/Smooth_Male_Casual.fbx");
-	man5.position = glm::vec3(20.0f, 0.0f, 0.0f);
+	//Character man5("man/Smooth_Male_Casual.fbx");
+	//man5.position = glm::vec3(20.0f, 0.0f, 0.0f);
 
 	allCharacters.push_back(&man1);
-	allCharacters.push_back(&man2);
-	allCharacters.push_back(&man3);
-	allCharacters.push_back(&man4);
-	allCharacters.push_back(&man5);
+	//allCharacters.push_back(&man2);
+	//allCharacters.push_back(&man3);
+	//allCharacters.push_back(&man4);
+	//allCharacters.push_back(&man5);
 
 	// render loop
 	// -----------
@@ -138,8 +139,10 @@ int main()
 
 		shader.setFloat("material.shininess", 32.0f);
 
+		double time = glfwGetTime();
+
 		for (auto chara : allCharacters) {
-			chara->Draw(shader);
+			chara->Draw(shader, static_cast<float>(time));
 		}
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

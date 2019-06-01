@@ -6,7 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <learnopengl/model.h>
+
+//#include <learnopengl/model.h>
+
+#include "AnimatedModel.h"
 
 class Character
 {
@@ -17,14 +20,15 @@ public:
 		scale = glm::vec3(1.0f, 1.0f, 1.0f);
 		angles = 0.0f;
 	}
-	void Draw(Shader shader) {
+	void Draw(Shader shader, float time) {
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model, angles, glm::vec3(1.0f, 0.0f, 1.0f));
 		model = glm::scale(model, scale);
 		model = glm::translate(model, position);
 		shader.setMat4("model", model);
 
-		characterModel.Draw(shader);
+		characterModel.Draw(shader, time);
+		//characterModel.Draw(shader);
 	}
 
 	glm::vec3 position;
@@ -32,7 +36,7 @@ public:
 	GLfloat angles;
 private:
 
-	Model characterModel;
+	AnimatedModel characterModel;
 };
 
 #endif // !CHARACTER_H
