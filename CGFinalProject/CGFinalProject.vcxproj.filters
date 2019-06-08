@@ -29,10 +29,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="simpleLight.fs">
+    <None Include="animatedModel.vs">
       <Filter>源文件</Filter>
     </None>
-    <None Include="simpleLight.vs">
+    <None Include="animatedModel.fs">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>

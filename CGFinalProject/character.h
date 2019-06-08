@@ -17,7 +17,7 @@ public:
 	Character(std::string Path) 
 	: characterModel(Path.data()) {
 		position = glm::vec3(1.0f, 1.0f, 1.0f);
-		scale = glm::vec3(0.05f, 0.05f, 0.05f);
+		scale = glm::vec3(3.0f, 3.0f, 3.0f);
 		angles = 0.0f;
 	}
 	void Draw(Shader shader, float time) {

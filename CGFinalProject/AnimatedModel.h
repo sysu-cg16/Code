@@ -28,15 +28,16 @@ public:
 	unsigned int numBones;
 
 	void Draw(Shader shader, float time) {
-		vector<Matrix4f> Transforms;
-		BoneTransform(time, Transforms);
-		char uniformName[50];
-		for (unsigned int i = 0; i < numBones; i++) {
-			sprintf(uniformName, "gBones[%d]", i);
-			GLuint location = glGetUniformLocation(shader.ID, uniformName);
-			glUniformMatrix4fv(location, 1, GL_TRUE, (const GLfloat*)Transforms[i]);
+		if (pScene->HasAnimations()) {
+			vector<Matrix4f> Transforms;
+			BoneTransform(time, Transforms);
+			char uniformName[50];
+			for (unsigned int i = 0; i < numBones; i++) {
+				sprintf(uniformName, "gBones[%d]", i);
+				GLuint location = glGetUniformLocation(shader.ID, uniformName);
+				glUniformMatrix4fv(location, 1, GL_TRUE, (const GLfloat*)Transforms[i]);
+			}
 		}
-
 		for (auto& mesh : meshes)
 		{
 			mesh.Draw(shader);

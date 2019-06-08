@@ -123,8 +123,8 @@
     <ClCompile Include="std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="simpleLight.fs" />
-    <None Include="simpleLight.vs" />
+    <None Include="animatedModel.fs" />
+    <None Include="animatedModel.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedMesh.h" />

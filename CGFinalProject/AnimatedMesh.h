@@ -37,7 +37,7 @@ struct Vertex {
 	Vertex() {
 		Position = glm::vec3(0.0f, 0.0f, 0.0f);
 		Normal = glm::vec3(0.0f, 0.0f, 0.0f);
-		boneID = glm::ivec4(0, 0, 0, 0);
+		boneID = glm::ivec4(-1, 0, 0, 0);
 		boneWeight = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 

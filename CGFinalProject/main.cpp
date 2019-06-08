@@ -27,6 +27,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+bool isFullScreen = false;
 
 // timing
 float deltaTime = 0.0f;
@@ -46,7 +47,8 @@ int main()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWmonitor* pMonitor = isFullScreen ? glfwGetPrimaryMonitor() : NULL;
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Project", pMonitor, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -75,9 +77,9 @@ int main()
 
 	// build and compile our shader zprogram
 	// ------------------------------------
-	Shader shader("simpleLight.vs", "simpleLight.fs");
+	Shader shader("animatedModel.vs", "animatedModel.fs");
 
-	Character man1("man/Male_Casual.fbx");
+	Character man1("resources/past.fbx");
 	man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
 
 	allCharacters.push_back(&man1);
