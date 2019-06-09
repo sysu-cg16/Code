@@ -5,6 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
 
@@ -19,8 +23,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 800*2;
+const unsigned int SCR_HEIGHT = 600*2;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -34,7 +38,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(1.2f, 100.0f, 2.0f);
+float lightDir[] = { 0.0f, -0.3f, 0.0f };
 
 int main()
 {
@@ -78,11 +82,28 @@ int main()
 	// build and compile our shader zprogram
 	// ------------------------------------
 	Shader shader("animatedModel.vs", "animatedModel.fs");
+	camera.MovementSpeed = 300.0f;
 
-	Character man1("resources/past.fbx");
+	Character man1("resources/past_1000.fbx");
 	man1.position = glm::vec3(-20.0f, 0.0f, 0.0f);
 
 	allCharacters.push_back(&man1);
+
+	// Setup Dear ImGui context
+	// ------------------------------
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 130");
 
 	// render loop
 	// -----------
@@ -93,6 +114,15 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Settting");
+		ImGui::SliderFloat3("lightDir", lightDir, -1, 1);
+		ImGui::End();
 
 		// input
 		// -----
@@ -105,17 +135,15 @@ int main()
 
 		// be sure to activate shader when setting uniforms/drawing objects
 		shader.use();
-		shader.setVec3("light.position", lightPos);
+		shader.setVec3("light.direction", lightDir[0], lightDir[1], lightDir[2]);
 		shader.setVec3("viewPos", camera.Position);
 
-		glm::vec3 diffuseColor = glm::vec3(1.0f, 1.0f, 1.0f); // decrease the influence
-		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f, 0.2f, 0.2f); // low influence
-		shader.setVec3("light.ambient", ambientColor);
-		shader.setVec3("light.diffuse", diffuseColor);
+		shader.setVec3("light.ambient", 0.4f, 0.4f, 0.4f);
+		shader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
 		shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMat4("projection", projection);
 		shader.setMat4("view", view);
@@ -127,6 +155,9 @@ int main()
 		for (auto chara : allCharacters) {
 			chara->Draw(shader, static_cast<float>(time));
 		}
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
@@ -155,6 +186,18 @@ void processInput(GLFWwindow *window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
+		glfwSetCursorPosCallback(window, NULL);
+		glfwSetScrollCallback(window, NULL);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS) {
+		glfwSetCursorPosCallback(window, mouse_callback);
+		glfwSetScrollCallback(window, scroll_callback);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		firstMouse = true;
+	}
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

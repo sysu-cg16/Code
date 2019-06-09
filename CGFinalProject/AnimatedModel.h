@@ -164,6 +164,9 @@ private:
 		mat.Ka = glm::vec4(color.r, color.g, color.b, 1.0);
 		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 		mat.Kd = glm::vec4(color.r, color.g, color.b, 1.0);
+		if (mat.Ka.x == 0 && mat.Ka.y == 0 && mat.Ka.z == 0) {
+			mat.Ka = mat.Kd;
+		}
 		material->Get(AI_MATKEY_COLOR_SPECULAR, color);
 		mat.Ks = glm::vec4(color.r, color.g, color.b, 1.0);
 
