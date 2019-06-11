@@ -14,15 +14,17 @@
 class Character
 {
 public:
-	Character(std::string Path) 
+	Character(std::string Path, glm::vec3 position = glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3 scale = glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3 angles = glm::vec3(0.0f, 0.0f, 0.0f))
 	: characterModel(Path.data()) {
-		position = glm::vec3(1.0f, 1.0f, 1.0f);
-		scale = glm::vec3(3.0f, 3.0f, 3.0f);
-		angles = 0.0f;
+		this->position = position;
+		this->angles = angles;
+		this->scale = scale;
 	}
 	void Draw(Shader shader, float time) {
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, angles, glm::vec3(1.0f, 0.0f, 1.0f));
+		model = glm::rotate(model, glm::radians(angles.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(angles.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, scale);
 		model = glm::translate(model, position);
 		shader.setMat4("model", model);
@@ -33,7 +35,7 @@ public:
 
 	glm::vec3 position;
 	glm::vec3 scale;
-	GLfloat angles;
+	glm::vec3 angles;
 private:
 
 	AnimatedModel characterModel;
