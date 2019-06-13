@@ -9,7 +9,7 @@ class Scene
 public:
 	~Scene();
 	void Draw(Shader shader, float time);
-	void addCharacter(std::string Path, glm::vec3 position = glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3 scale = glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3 angles = glm::vec3(0.0f, 0.0f, 0.0f));
+	void addCharacter(std::string Path, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3 angles = glm::vec3(0.0f, 0.0f, 0.0f));
 private:
 	vector<Character*> allCharacters;
 };

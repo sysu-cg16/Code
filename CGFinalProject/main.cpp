@@ -27,7 +27,7 @@ const unsigned int SCR_WIDTH = 800*2;
 const unsigned int SCR_HEIGHT = 600*2;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -41,7 +41,7 @@ float lastFrame = 0.0f;
 float lightDir[] = { 0.0f, -0.3f, 0.0f };
 
 float planePos[] = { 0.0f, 0.0f, 0.0f };
-float planeRota[] = { 0.0f, 0.0f, 0.0f };
+float planeRota[] = { 300.0f, 0.0f, 182.0f };
 float planeScale[] = { 1.0f, 1.0f, 1.0f };
 
 float blackPos[] = { 0.0f, 0.0f, 0.0f };
@@ -94,7 +94,7 @@ int main()
 	// build and compile our shader zprogram
 	// ------------------------------------
 	Shader shader("animatedModel.vs", "animatedModel.fs");
-	camera.MovementSpeed = 300.0f;
+	camera.MovementSpeed = 50.0f;
 	sceneController.init();
 	// now 
 	//Character now_map("resources/now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -141,20 +141,19 @@ int main()
 
 		ImGui::Begin("Settting");
 		ImGui::SliderFloat3("lightDir", lightDir, -1, 1);
-		ImGui::SliderFloat3("planePos", (float*)&(sceneController.viewPlane->position), RANGE_START, RANGE_END);
-		ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), RANGE_START, RANGE_END);
-		ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), RANGE_START, RANGE_END);
+		ImGui::SliderFloat3("planePos", planePos, -10, 10);
+		ImGui::SliderFloat3("planeRota", planeRota, 0, 360);
+		//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
+
+		ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
 		ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
-		ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), RANGE_START, RANGE_END);
-		ImGui::SliderFloat3("blackScale", (float*)&(sceneController.forwardBlackHole->scale), RANGE_START, RANGE_END);
+		ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), 0, 360);
+		ImGui::SliderFloat3("blackScale", (float*)&(sceneController.forwardBlackHole->scale), 0, 10);
 		ImGui::SliderFloat("sencer", &(sceneController.blackHoleSensitivity), RANGE_START, RANGE_END);
 		ImGui::End();
 
 		sceneController.blackHoleSensitivity = deterctedR;
-		//sceneController.viewPlane->position.x = planePos[0];
-		//sceneController.viewPlane->position.x = planePos[0];
-		//sceneController.viewPlane->position.x = planePos[0];
-		
+
 
 		// input
 		// -----
@@ -220,6 +219,10 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 
+	sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
+	sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
+	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
+
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 		glfwSetCursorPosCallback(window, NULL);
 		glfwSetScrollCallback(window, NULL);
@@ -261,6 +264,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastY = ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset);
+
+	sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
+	sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
+	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
+	sceneController.viewPlane->angles2.x = camera.Pitch;
+	sceneController.viewPlane->angles2.y = -90 - camera.Yaw;
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

@@ -29,7 +29,7 @@ inline void SceneController::init()
 {
 	forwardBlackHole = new Character("BlackHole.fbx", glm::vec3(0.0f,0.0f, 100.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(80.0f, -80.0f, 100.0f));
 	backwardBlackHole = new Character("BlackHole.fbx", glm::vec3(130.0f, 100.0f, 100.0f), glm::vec3(80.0f, 80.0f, 0.0f), glm::vec3(80.0f, -80.0f, 100.0f));
-	viewPlane = new Character("Spaceship3.fbx", glm::vec3(0.0f, 0.0f, 50.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, -88.0f));
+	viewPlane = new Character("Spaceship3.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
 	sceneIndex = 0;
 	isForwardShow = false;
 	isBackwardShow = false;
