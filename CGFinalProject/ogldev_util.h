@@ -26,6 +26,9 @@
 #include <vector>
 #include <string.h>
 #include <assert.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 typedef int uint;
 using namespace std;
@@ -73,6 +76,8 @@ using namespace std;
 #define GLCheckError() (glGetError() == GL_NO_ERROR)
 
 #define ASSIMP_LOAD_FLAGS (aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices)
+
+float distanceOfPositions(const glm::vec3 pos1, const glm::vec3 pos2);
 
 #endif	/* OGLDEV_UTIL_H */
 

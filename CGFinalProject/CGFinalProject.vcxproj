@@ -75,8 +75,8 @@
     <LibraryPath>libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\VSRepository\CGFinalProject\Code\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\VSRepository\CGFinalProject\Code\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\main_study\code\CGFinalProject\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\main_study\code\CGFinalProject\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,6 +133,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math_3d.cpp" />
+    <ClCompile Include="my_util.cpp" />
     <ClCompile Include="std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,8 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="math_3d.h" />
     <ClInclude Include="ogldev_util.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="sceneController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
