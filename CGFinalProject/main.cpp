@@ -40,15 +40,6 @@ float lastFrame = 0.0f;
 // lighting
 float lightDir[] = { 0.0f, -0.3f, 0.0f };
 
-float planePos[] = { 0.0f, 0.0f, 0.0f };
-float planeRota[] = { 300.0f, 0.0f, 182.0f };
-float planeScale[] = { 1.0f, 1.0f, 1.0f };
-
-float blackPos[] = { 0.0f, 0.0f, 0.0f };
-float blackRota[] = { 0.0f, 0.0f, 0.0f };
-float blackScale[] = { 1.0f, 1.0f, 1.0f };
-
-float deterctedR = 0.0f;
 
 SceneController sceneController;
 
@@ -122,85 +113,82 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 130");
 
 	// render loop
-	// -----------
-	while (!glfwWindowShouldClose(window))
-	{
-		// per-frame time logic
-		// --------------------
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+// -----------
+while (!glfwWindowShouldClose(window))
+{
+	// per-frame time logic
+	// --------------------
+	float currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
 
-		const float RANGE_START = -300.0f;
-		const float RANGE_END = 300.0f;
+	const float RANGE_START = -400.0f;
+	const float RANGE_END = 400.0f;
 
-		// Start the Dear ImGui frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+	// Start the Dear ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 
-		ImGui::Begin("Settting");
-		ImGui::SliderFloat3("lightDir", lightDir, -1, 1);
-		ImGui::SliderFloat3("planePos", planePos, -10, 10);
-		ImGui::SliderFloat3("planeRota", planeRota, 0, 360);
-		//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
+	ImGui::Begin("Settting");
+	ImGui::SliderFloat3("lightDir", lightDir, -1, 1);
+	ImGui::SliderFloat3("planePos", (float*)&(sceneController.viewPlane->position), -10, 10);
+	ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
+	//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
 
-		ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
-		ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
-		ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), 0, 360);
-		ImGui::SliderFloat3("blackScale", (float*)&(sceneController.forwardBlackHole->scale), 0, 10);
-		ImGui::SliderFloat("sencer", &(sceneController.blackHoleSensitivity), RANGE_START, RANGE_END);
-		ImGui::End();
+	ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
+	ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
+	ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), 0, 360);
+	ImGui::SliderFloat3("blackScale", (float*)&(sceneController.forwardBlackHole->scale), 0, 10);
+	ImGui::SliderFloat("sencer", &(sceneController.blackHoleSensitivity), RANGE_START, RANGE_END);
+	ImGui::End();
 
-		sceneController.blackHoleSensitivity = deterctedR;
+	// input
+	// -----
+	processInput(window);
 
+	// render
+	// ------
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// input
-		// -----
-		processInput(window);
-		
-		// render
-		// ------
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// be sure to activate shader when setting uniforms/drawing objects
+	shader.use();
+	shader.setVec3("light.direction", lightDir[0], lightDir[1], lightDir[2]);
+	shader.setVec3("viewPos", camera.Position);
 
-		// be sure to activate shader when setting uniforms/drawing objects
-		shader.use();
-		shader.setVec3("light.direction", lightDir[0], lightDir[1], lightDir[2]);
-		shader.setVec3("viewPos", camera.Position);
+	shader.setVec3("light.ambient", 0.4f, 0.4f, 0.4f);
+	shader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
+	shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-		shader.setVec3("light.ambient", 0.4f, 0.4f, 0.4f);
-		shader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
-		shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+	// view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	shader.setMat4("projection", projection);
+	shader.setMat4("view", view);
 
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		shader.setMat4("projection", projection);
-		shader.setMat4("view", view);
+	shader.setFloat("material.shininess", 32.0f);
 
-		shader.setFloat("material.shininess", 32.0f);
+	double time = glfwGetTime();
 
-		double time = glfwGetTime();
+	//for (auto chara : allCharacters) {
+	//	chara->Draw(shader, static_cast<float>(time));
+	//}
+	sceneController.Draw(shader, time);
 
-		//for (auto chara : allCharacters) {
-		//	chara->Draw(shader, static_cast<float>(time));
-		//}
-		sceneController.Draw(shader, time);
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+	// -------------------------------------------------------------------------------
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
 
 
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
-	glfwTerminate();
-	return 0;
+// glfw: terminate, clearing all previously allocated GLFW resources.
+// ------------------------------------------------------------------
+glfwTerminate();
+return 0;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -219,9 +207,17 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 
-	sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
-	sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
-	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS ||
+		glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
+		glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS ||
+		glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
+		sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
+		sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
+		sceneController.sceneChangeDetector();
+}
+
+
 
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 		glfwSetCursorPosCallback(window, NULL);
@@ -270,6 +266,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
 	sceneController.viewPlane->angles2.x = camera.Pitch;
 	sceneController.viewPlane->angles2.y = -90 - camera.Yaw;
+	
+	sceneController.sceneChangeDetector();
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
