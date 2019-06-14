@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CGFinalProject", "CGFinalProject\CGFinalProject.vcxproj", "{6DEC3D46-5EC2-48EA-AAC2-C8FAD5C3E2D0}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CGFinal", "CGFinal\CGFinal.vdproj", "{254AAF82-7F16-4788-B0F8-DB714C1614B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{6DEC3D46-5EC2-48EA-AAC2-C8FAD5C3E2D0}.Release|x64.Build.0 = Release|x64
 		{6DEC3D46-5EC2-48EA-AAC2-C8FAD5C3E2D0}.Release|x86.ActiveCfg = Release|Win32
 		{6DEC3D46-5EC2-48EA-AAC2-C8FAD5C3E2D0}.Release|x86.Build.0 = Release|Win32
+		{254AAF82-7F16-4788-B0F8-DB714C1614B0}.Debug|x64.ActiveCfg = Debug
+		{254AAF82-7F16-4788-B0F8-DB714C1614B0}.Debug|x86.ActiveCfg = Debug
+		{254AAF82-7F16-4788-B0F8-DB714C1614B0}.Release|x64.ActiveCfg = Release
+		{254AAF82-7F16-4788-B0F8-DB714C1614B0}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
