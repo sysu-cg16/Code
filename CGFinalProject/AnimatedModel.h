@@ -29,6 +29,7 @@ public:
 
 	void Draw(Shader shader, float time) {
 		if (pScene->HasAnimations()) {
+		//if(false) {
 			vector<Matrix4f> Transforms;
 			BoneTransform(time, Transforms);
 			char uniformName[50];
@@ -196,6 +197,10 @@ private:
 				vertices[vertexID].AddBoneData(BoneIndex, weight);
 			}
 		}
+		// 所有的骨骼都加上影响权重之后
+		for (auto& vertex : vertices) {
+			vertex.normalizeBoneWeight();
+		}
 		return AnimatedMesh(vertices, indices, mat);
 	}
 
@@ -232,8 +237,17 @@ private:
 			// Interpolate scaling and generate scaling transformation matrix
 			aiVector3D Scaling;
 			CalcInterpolatedScaling(Scaling, AnimationTime, pNodeAnim);
+			// 忽略scale影响
 			Matrix4f ScalingM;
+			//ScalingM.InitIdentity();
 			ScalingM.InitScaleTransform(Scaling.x, Scaling.y, Scaling.z);
+
+			//float* m = static_cast<float*>(&ScalingM.m[0][0]);
+			//for (int i = 0; i < 16;) {
+			//	printf("%.2f %.2f %.2f %.2f\n", m[i], m[i+1], m[i + 2], m[i + 3]);
+			//	i += 4;
+			//}
+			//printf("\n\n");
 
 			// Interpolate rotation and generate rotation transformation matrix
 			aiQuaternion RotationQ;
