@@ -139,6 +139,8 @@
   <ItemGroup>
     <None Include="animatedModel.fs" />
     <None Include="animatedModel.vs" />
+    <None Include="skyBox.fs" />
+    <None Include="skyBox.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedMesh.h" />
@@ -156,6 +158,7 @@
     <ClInclude Include="ogldev_util.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sceneController.h" />
+    <ClInclude Include="skyBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

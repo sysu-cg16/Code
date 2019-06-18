@@ -56,6 +56,12 @@
     <None Include="animatedModel.fs">
       <Filter>源文件</Filter>
     </None>
+    <None Include="skyBox.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="skyBox.fs">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h">
@@ -101,6 +107,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="sceneController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="skyBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
