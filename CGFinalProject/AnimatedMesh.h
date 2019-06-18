@@ -56,7 +56,11 @@ struct Vertex {
 	}
 
 	void normalizeBoneWeight() {
-		assert(0);
+		float totalWeight = boneWeight.x + boneWeight.y + boneWeight.z + boneWeight.w;
+		boneWeight.x = boneWeight.x / totalWeight;
+		boneWeight.y = boneWeight.y / totalWeight;
+		boneWeight.z = boneWeight.z / totalWeight;
+		boneWeight.w = boneWeight.w / totalWeight;
 	}
 
 
