@@ -16,6 +16,9 @@
 
 #include <stb_image.h>
 #include "sceneController.h"
+#include "skyBox.h"
+
+#include "ogldev_util.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -23,8 +26,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800*2;
-const unsigned int SCR_HEIGHT = 600*2;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -84,6 +85,8 @@ int main()
 
 	// build and compile our shader zprogram
 	// ------------------------------------
+	
+
 	Shader shader("animatedModel.vs", "animatedModel.fs");
 	camera.MovementSpeed = 50.0f;
 	sceneController.init();
@@ -111,6 +114,10 @@ int main()
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
+
+
+	SkyBox skyBox(&camera);
+	skyBox.init();
 
 	// render loop
 // -----------
@@ -171,10 +178,8 @@ while (!glfwWindowShouldClose(window))
 
 	double time = glfwGetTime();
 
-	//for (auto chara : allCharacters) {
-	//	chara->Draw(shader, static_cast<float>(time));
-	//}
 	sceneController.Draw(shader, time);
+	skyBox.Draw();
 
 	//ImGui::Render();
 	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
