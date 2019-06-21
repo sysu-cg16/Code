@@ -86,6 +86,9 @@ int main()
 	// build and compile our shader zprogram
 	// ------------------------------------
 	
+	// 开启字体的混合
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Shader shader("animatedModel.vs", "animatedModel.fs");
 	camera.MovementSpeed = 50.0f;
@@ -123,6 +126,9 @@ int main()
 // -----------
 while (!glfwWindowShouldClose(window))
 {
+
+	glfwGetWindowSize(window, (int*)&SCR_WIDTH, (int*)&SCR_HEIGHT);
+
 	// per-frame time logic
 	// --------------------
 	float currentFrame = glfwGetTime();
@@ -201,14 +207,22 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		sceneController.setThisFramePressed('W');
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		sceneController.setThisFramePressed('S');
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		sceneController.setThisFramePressed('A');
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+		sceneController.setThisFramePressed('D');
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS ||
 		glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||

@@ -33,8 +33,13 @@
 typedef int uint;
 using namespace std;
 
-extern const unsigned int SCR_WIDTH;
-extern const unsigned int SCR_HEIGHT;
+extern unsigned int SCR_WIDTH;
+extern unsigned int SCR_HEIGHT;
+
+#define DISALLOW_COPY_AND_ASSIGN(classname) \
+private:                                   \
+    classname(const classname &);             \
+    classname &operator=(const classname &);
 
 #define OGLDEV_ERROR0(msg) OgldevError(__FILE__, __LINE__, msg)
 #define OGLDEV_ERROR(msg, ...) OgldevError(__FILE__, __LINE__, msg, __VA_ARGS__)

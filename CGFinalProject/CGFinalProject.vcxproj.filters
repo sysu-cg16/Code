@@ -62,6 +62,12 @@
     <None Include="skyBox.fs">
       <Filter>源文件</Filter>
     </None>
+    <None Include="fontRender.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="fontRender.vs">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math_3d.h">
@@ -110,6 +116,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="spirit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="fontRender.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

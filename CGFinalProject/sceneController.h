@@ -3,9 +3,11 @@
 
 #include "scene.h"
 #include <vector>
+#include "fontRender.h"
 
 class SceneController
 {
+DISALLOW_COPY_AND_ASSIGN(SceneController)
 public:
 	SceneController();
 	~SceneController();
@@ -16,6 +18,7 @@ public:
 	Spirit* backwardBlackHole;
 	Spirit* viewPlane;
 	void sceneChangeDetector();
+	void setThisFramePressed(const char pressed);
 private:
 	void initScenePast();
 	void initSceneNow();
@@ -24,10 +27,17 @@ private:
 	bool isForwardShow;
 	bool isBackwardShow;
 	bool blackHoleDistancePreEstimate(const glm::vec3& holePos) const;
+
+	// 用于当前按钮显示
+	FontRender* fontRender;
+	char thisFramePressed;
+	bool isPressedThisFrame;
 };
 
 inline void SceneController::init()
 {
+	isPressedThisFrame = false;
+	fontRender = FontRender::getInstance();
 	forwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
 	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
 	viewPlane = new Spirit("Spaceship3.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
@@ -60,6 +70,11 @@ void SceneController::Draw(Shader shader, float time)
 
 	allScenes[sceneIndex]->Draw(shader, time);
 	viewPlane->Draw(shader, time);
+
+	if (isPressedThisFrame) {
+		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		isPressedThisFrame = false;
+	}
 }
 
 SceneController::SceneController()
@@ -75,6 +90,11 @@ SceneController::~SceneController()
 	for (auto & s : allScenes) {
 		delete s;
 	}
+}
+
+void SceneController::setThisFramePressed(const char pressed) {
+	isPressedThisFrame = true;
+	thisFramePressed = pressed;
 }
 
 void SceneController::sceneChangeDetector()
