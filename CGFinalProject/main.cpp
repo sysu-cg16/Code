@@ -78,7 +78,7 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	vector<Character*> allCharacters;
+	vector<Spirit*> allCharacters;
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
@@ -91,9 +91,9 @@ int main()
 	camera.MovementSpeed = 50.0f;
 	sceneController.init();
 	// now 
-	//Character now_map("resources/now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	//Character now_upper_half("resources/now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-	//Character now_lower_half("resources/now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+	//Spirit now_map("resources/now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	//Spirit now_upper_half("resources/now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+	//Spirit now_lower_half("resources/now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
 
 	//allCharacters.push_back(&now_map);
 	//allCharacters.push_back(&now_upper_half);

@@ -64,9 +64,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="character.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="math_3d.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -110,6 +107,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="skyBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="spirit.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
