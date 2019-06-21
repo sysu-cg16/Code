@@ -171,6 +171,10 @@ private:
 		material->Get(AI_MATKEY_COLOR_SPECULAR, color);
 		mat.Ks = glm::vec4(color.r, color.g, color.b, 1.0);
 
+		float Ni;
+		material->Get(AI_MATKEY_SHININESS, Ni);
+		mat.Ni = Ni;
+
 		// 加载骨骼权重信息到顶点，并将骨骼加入allBones和boneMap
 		for (uint i = 0; i < mesh->mNumBones; i++) {
 			unsigned int BoneIndex = 0;

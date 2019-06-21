@@ -174,8 +174,6 @@ while (!glfwWindowShouldClose(window))
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
 
-	shader.setFloat("material.shininess", 32.0f);
-
 	double time = glfwGetTime();
 
 	sceneController.Draw(shader, time);
