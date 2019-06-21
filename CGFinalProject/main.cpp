@@ -24,7 +24,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
-
+void renderQuad();
 // settings
 
 // camera
@@ -40,6 +40,9 @@ float lastFrame = 0.0f;
 
 // lighting
 float lightDir[] = { 0.0f, -0.3f, 0.0f };
+//float lightPos[] = { -231.0f, 500.0f, 78.0f };
+float lightPos[] = { -39.0f, 100.0f, -100.0f };
+float lightPan = 500;
 
 
 SceneController sceneController;
@@ -86,8 +89,12 @@ int main()
 	// build and compile our shader zprogram
 	// ------------------------------------
 	
+	Shader debugDepthQuad("debug_shadow_mapping.vs", "debug_shadow_mapping.fs");
+	debugDepthQuad.use();
+	debugDepthQuad.setInt("depthMap", 0);
 
 	Shader shader("animatedModel.vs", "animatedModel.fs");
+	Shader depthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 	camera.MovementSpeed = 50.0f;
 	sceneController.init();
 	// now 
@@ -119,6 +126,80 @@ int main()
 	SkyBox skyBox(&camera);
 	skyBox.init();
 
+/*******************************************************************************/
+	float vertices[] = {
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+	};
+	// first, configure the cube's VAO (and VBO)
+	unsigned int VBO, cubeVAO;
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &VBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(cubeVAO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// note that we update the lamp's position attribute's stride to reflect the updated buffer data
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	Shader lampShader("4.2.lamp.vs", "4.2.lamp.fs");
+/*******************************************************************************/
+
+
 	// render loop
 // -----------
 while (!glfwWindowShouldClose(window))
@@ -133,22 +214,25 @@ while (!glfwWindowShouldClose(window))
 	const float RANGE_END = 400.0f;
 
 	// Start the Dear ImGui frame
-	//ImGui_ImplOpenGL3_NewFrame();
-	//ImGui_ImplGlfw_NewFrame();
-	//ImGui::NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 
-	//ImGui::Begin("Settting");
-	//ImGui::SliderFloat3("lightDir", lightDir, -1, 1);
+	ImGui::Begin("Settting");
+	ImGui::InputFloat3("lightDir", lightDir, 2);
+	//ImGui::SliderFloat3("lightPos", lightPos, -100,100);
+	ImGui::InputFloat3("lightPos", lightPos, 2);
+	ImGui::InputFloat("lightPan", &lightPan, 2);
 	//ImGui::SliderFloat3("planePos", (float*)&(sceneController.viewPlane->position), -10, 10);
 	//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
-	////ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
+	//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
 
-	//ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
-	//ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
-	//ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), 0, 360);
-	//ImGui::SliderFloat3("blackScale", (float*)&(sceneController.forwardBlackHole->scale), 0, 10);
-	//ImGui::SliderFloat("sencer", &(sceneController.blackHoleSensitivity), RANGE_START, RANGE_END);
-	//ImGui::End();
+	/*ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
+	ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
+	ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), 0, 360);
+	ImGui::SliderFloat3("blackScale", (float*)&(sceneController.forwardBlackHole->scale), 0, 10);
+	ImGui::SliderFloat("sencer", &(sceneController.blackHoleSensitivity), RANGE_START, RANGE_END);*/
+	ImGui::End();
 
 	// input
 	// -----
@@ -159,13 +243,41 @@ while (!glfwWindowShouldClose(window))
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	
+
+	// 1. render depth of scene to texture (from light's perspective)
+	// --------------------------------------------------------------
+	glm::mat4 lightProjection, lightView;
+	glm::mat4 lightSpaceMatrix;
+	lightProjection = glm::ortho(-lightPan, lightPan, -lightPan, lightPan, 0.1f, lightPan);
+	lightView = glm::lookAt(glm::vec3(lightPos[0], lightPos[1], lightPos[2]), 
+							glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	lightSpaceMatrix = lightProjection * lightView;
+	// render scene from light's point of view
+	depthShader.use();
+	depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, sceneController.depthMapFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	sceneController.Draw(depthShader, currentFrame);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// reset viewport
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// 2. render scene as normal using the generated depth/shadow map  
+    // --------------------------------------------------------------
+
 	// be sure to activate shader when setting uniforms/drawing objects
 	shader.use();
-	shader.setVec3("light.direction", lightDir[0], lightDir[1], lightDir[2]);
+	shader.setInt("shadowMap", 0);
+	shader.setVec3("light.direction", -lightPos[0], -lightPos[1], -lightPos[2]);
 	shader.setVec3("viewPos", camera.Position);
 
-	shader.setVec3("light.ambient", 0.4f, 0.4f, 0.4f);
-	shader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
+	shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+	shader.setVec3("light.diffuse", 1.0f, 1.0f, 1.0f);
 	shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 	// view/projection transformations
@@ -173,16 +285,38 @@ while (!glfwWindowShouldClose(window))
 	glm::mat4 view = camera.GetViewMatrix();
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
+	shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
 	shader.setFloat("material.shininess", 32.0f);
 
-	double time = glfwGetTime();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, sceneController.depthMap);
+	sceneController.Draw(shader, currentFrame);
 
-	sceneController.Draw(shader, time);
-	skyBox.Draw();
 
-	//ImGui::Render();
-	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	// also draw the lamp object
+	lampShader.use();
+	lampShader.setMat4("projection", projection);
+	lampShader.setMat4("view", view);
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(lightPos[0], lightPos[1], lightPos[2]));
+	model = glm::scale(model, glm::vec3(10.0f)); // a smaller cube
+	lampShader.setMat4("model", model);
+
+	glBindVertexArray(lightVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	//
+	debugDepthQuad.use();
+	debugDepthQuad.setFloat("near_plane", 0.1f);
+	debugDepthQuad.setFloat("far_plane", lightPan);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, sceneController.depthMap);
+	//renderQuad();
+
+	//skyBox.Draw();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 	// -------------------------------------------------------------------------------
 	glfwSwapBuffers(window);
@@ -280,4 +414,34 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
+}
+
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
 }

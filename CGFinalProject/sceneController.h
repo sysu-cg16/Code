@@ -16,7 +16,10 @@ public:
 	Character* backwardBlackHole;
 	Character* viewPlane;
 	void sceneChangeDetector();
+	unsigned int depthMapFBO;
+	unsigned int depthMap;
 private:
+	void initDepthMapFBO();
 	void initScenePast();
 	void initSceneNow();
 	vector<Scene*> allScenes;
@@ -30,11 +33,12 @@ inline void SceneController::init()
 {
 	forwardBlackHole = new Character("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
 	backwardBlackHole = new Character("BlackHole.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	viewPlane = new Character("Spaceship3.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
+	viewPlane = new Character("spaceship.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
 	sceneIndex = 0;
 	isForwardShow = false;
 	isBackwardShow = false;
 
+	initDepthMapFBO();
 	initScenePast();
 	//initSceneNow();
 }
@@ -104,7 +108,9 @@ inline void SceneController::initScenePast()
 {
 	allScenes.push_back(new Scene());
 	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	//allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("past_1000.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
+		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 inline void SceneController::initSceneNow()
 {
@@ -122,4 +128,25 @@ bool SceneController::blackHoleDistancePreEstimate(const glm::vec3& holePos) con
 	}
 	return true;
 }
+
+void SceneController::initDepthMapFBO() {
+	glGenFramebuffers(1, &depthMapFBO);
+	// create depth texture
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	// attach depth texture as FBO's depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 #endif // !SCENE_CONTROLLER__H

@@ -35,6 +35,9 @@ using namespace std;
 
 extern const unsigned int SCR_WIDTH;
 extern const unsigned int SCR_HEIGHT;
+extern const unsigned int SHADOW_WIDTH;
+extern const unsigned int SHADOW_HEIGHT;
+
 
 #define OGLDEV_ERROR0(msg) OgldevError(__FILE__, __LINE__, msg)
 #define OGLDEV_ERROR(msg, ...) OgldevError(__FILE__, __LINE__, msg, __VA_ARGS__)
