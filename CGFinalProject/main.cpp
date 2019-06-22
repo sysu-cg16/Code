@@ -20,7 +20,8 @@
 
 #include "ogldev_util.h"
 
-//#define IMGUI_TEST
+#define IMGUI_TEST
+//#define DEPTHMAP_TEST
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -45,8 +46,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-float lightPos[] = { -39.0f, 100.0f, -100.0f };
-float lightPan = 500;
+float lightPos[] = { -80.0f, 407.0f, 230.0f };
+float lightPan = 1000;
 
 
 SceneController sceneController;
@@ -89,13 +90,13 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-  // ��������Ļ��
+	// 文字开启混合
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
 	// build and compile our shader zprogram
 	// ------------------------------------
-  Shader shader("animatedModel.vs", "animatedModel.fs");
+	Shader shader("animatedModel.vs", "animatedModel.fs");
 	Shader depthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 	Shader debugDepthQuad("debug_shadow_mapping.vs", "debug_shadow_mapping.fs");
 	
@@ -117,17 +118,7 @@ int main()
 
 	// init variable
 	// ------------------------------
-	vector<Character*> allCharacters;
-	// now 
-	//Character now_map("resources/now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	//Character now_upper_half("resources/now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-	//Character now_lower_half("resources/now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
-
-	//allCharacters.push_back(&now_map);
-	//allCharacters.push_back(&now_upper_half);
-	//allCharacters.push_back(&now_lower_half);
-
-	camera.MovementSpeed = 50.0f;
+	camera.MovementSpeed = 200.0f;
 	sceneController.init();
 	SkyBox skyBox(&camera);
 	skyBox.init();
@@ -172,13 +163,14 @@ int main()
 		showScence(shader, currentFrame, lightSpaceMatrix);
 	
 		// show depthMap
-		///shouDepthMap(debugDepthQuad);
-
+#ifdef DEPTHMAP_TEST
+		shouDepthMap(debugDepthQuad);
+#endif
 		skyBox.Draw();
     
-  #ifdef IMGUI_TEST
+ #ifdef IMGUI_TEST
 		showGui();
-  #endif // IMGUI_TEST
+ #endif // IMGUI_TEST
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
@@ -331,7 +323,7 @@ void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix
 	shader.setVec3("light.direction", -lightPos[0], -lightPos[1], -lightPos[2]);
 	shader.setVec3("viewPos", camera.Position);
 
-	shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+	shader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
 	shader.setVec3("light.diffuse", 1.0f, 1.0f, 1.0f);
 	shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
@@ -341,8 +333,6 @@ void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
 	shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-	shader.setFloat("material.shininess", 32.0f);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sceneController.depthMap);

@@ -131,12 +131,14 @@ inline void SceneController::initScenePast()
 	allScenes.push_back(new Scene());
 	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
 	//allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("past_1000.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
-		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("past_static.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
+		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
 }
 inline void SceneController::initSceneNow()
 {
 	allScenes.push_back(new Scene());
+	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
+
 	allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	allScenes.back()->addCharacter("now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
 	allScenes.back()->addCharacter("now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
