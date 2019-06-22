@@ -137,8 +137,14 @@
     <ClCompile Include="std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="4.2.lamp.fs" />
+    <None Include="4.2.lamp.vs" />
     <None Include="animatedModel.fs" />
     <None Include="animatedModel.vs" />
+    <None Include="debug_shadow_mapping.fs" />
+    <None Include="debug_shadow_mapping.vs" />
+    <None Include="shadow_mapping_depth.fs" />
+    <None Include="shadow_mapping_depth.vs" />
     <None Include="skyBox.fs" />
     <None Include="skyBox.vs" />
   </ItemGroup>
