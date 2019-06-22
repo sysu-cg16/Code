@@ -66,6 +66,22 @@
       <Filter>源文件</Filter>
     </None>
     <None Include="fontRender.vs">
+    <None Include="shadow_mapping_depth.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="shadow_mapping_depth.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="4.2.lamp.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="4.2.lamp.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="debug_shadow_mapping.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="debug_shadow_mapping.vs">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>

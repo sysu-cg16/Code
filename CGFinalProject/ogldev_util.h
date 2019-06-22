@@ -33,8 +33,11 @@
 typedef int uint;
 using namespace std;
 
+
 extern unsigned int SCR_WIDTH;
 extern unsigned int SCR_HEIGHT;
+extern const unsigned int SHADOW_WIDTH;
+extern const unsigned int SHADOW_HEIGHT;
 
 #define DISALLOW_COPY_AND_ASSIGN(classname) \
 private:                                   \

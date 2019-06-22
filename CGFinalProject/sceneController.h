@@ -19,7 +19,11 @@ public:
 	Spirit* viewPlane;
 	void sceneChangeDetector();
 	void setThisFramePressed(const char pressed);
+	unsigned int depthMapFBO;
+	unsigned int depthMap;
+
 private:
+	void initDepthMapFBO();
 	void initScenePast();
 	void initSceneNow();
 	vector<Scene*> allScenes;
@@ -28,7 +32,7 @@ private:
 	bool isBackwardShow;
 	bool blackHoleDistancePreEstimate(const glm::vec3& holePos) const;
 
-	// ÓÃÓÚµ±Ç°°´Å¥ÏÔÊ¾
+	// ç”¨äºŽå½“å‰æŒ‰é’®æ˜¾ç¤º
 	FontRender* fontRender;
 	char thisFramePressed;
 	bool isPressedThisFrame;
@@ -40,11 +44,13 @@ inline void SceneController::init()
 	fontRender = FontRender::getInstance();
 	forwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
 	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	viewPlane = new Spirit("Spaceship3.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
+	viewPlane = new Spirit("spaceship.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
+
 	sceneIndex = 0;
 	isForwardShow = false;
 	isBackwardShow = false;
 
+	initDepthMapFBO();
 	initScenePast();
 	//initSceneNow();
 }
@@ -65,7 +71,7 @@ void SceneController::Draw(Shader shader, float time)
 	if(isBackwardShow)
 		backwardBlackHole->Draw(shader, time);
 
-	//// µ÷ÊÔÓÃ
+	//// è°ƒè¯•ç”¨
 	//forwardBlackHole->Draw(shader, time);
 
 	allScenes[sceneIndex]->Draw(shader, time);
@@ -100,7 +106,7 @@ void SceneController::setThisFramePressed(const char pressed) {
 void SceneController::sceneChangeDetector()
 {
 	float dis;
-	// ¼ÆËãÏûºÄ´ó£¬ÏÈ´ÖÂÔÅÐ¶Ï
+	// è®¡ç®—æ¶ˆè€—å¤§ï¼Œå…ˆç²—ç•¥åˆ¤æ–­
 	if (isForwardShow && blackHoleDistancePreEstimate(forwardBlackHole->position)) {
 		dis = distanceOfPositions(viewPlane->position, forwardBlackHole->position);
 		//printf("forwardHole dis: %f\n\n", dis);
@@ -123,8 +129,10 @@ void SceneController::sceneChangeDetector()
 inline void SceneController::initScenePast()
 {
 	allScenes.push_back(new Scene());
-	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
+	//allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("past_1000.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
+		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 inline void SceneController::initSceneNow()
 {
@@ -142,4 +150,25 @@ bool SceneController::blackHoleDistancePreEstimate(const glm::vec3& holePos) con
 	}
 	return true;
 }
+
+void SceneController::initDepthMapFBO() {
+	glGenFramebuffers(1, &depthMapFBO);
+	// create depth texture
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	// attach depth texture as FBO's depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 #endif // !SCENE_CONTROLLER__H
