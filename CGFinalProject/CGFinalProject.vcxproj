@@ -86,6 +86,9 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -141,6 +144,8 @@
     <None Include="4.2.lamp.vs" />
     <None Include="animatedModel.fs" />
     <None Include="animatedModel.vs" />
+    <None Include="fontRender.fs" />
+    <None Include="fontRender.vs" />
     <None Include="debug_shadow_mapping.fs" />
     <None Include="debug_shadow_mapping.vs" />
     <None Include="shadow_mapping_depth.fs" />
@@ -151,7 +156,8 @@
   <ItemGroup>
     <ClInclude Include="AnimatedMesh.h" />
     <ClInclude Include="AnimatedModel.h" />
-    <ClInclude Include="character.h" />
+    <ClInclude Include="fontRender.h" />
+    <ClInclude Include="spirit.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_glfw.h" />

@@ -20,6 +20,8 @@
 
 #include "ogldev_util.h"
 
+//#define IMGUI_TEST
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -83,17 +85,20 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	
+
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-
+  // ��������Ļ��
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
 	// build and compile our shader zprogram
 	// ------------------------------------
-	Shader shader("animatedModel.vs", "animatedModel.fs");
+  Shader shader("animatedModel.vs", "animatedModel.fs");
 	Shader depthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 	Shader debugDepthQuad("debug_shadow_mapping.vs", "debug_shadow_mapping.fs");
-
+	
 	// Setup Dear ImGui context
 	// ------------------------------
 	IMGUI_CHECKVERSION();
@@ -127,11 +132,11 @@ int main()
 	SkyBox skyBox(&camera);
 	skyBox.init();
 
-
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
+    glfwGetWindowSize(window, (int*)&SCR_WIDTH, (int*)&SCR_HEIGHT);
 		// per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
@@ -170,15 +175,16 @@ int main()
 		///shouDepthMap(debugDepthQuad);
 
 		skyBox.Draw();
-
+    
+  #ifdef IMGUI_TEST
 		showGui();
+  #endif // IMGUI_TEST
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
-
+  
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();
@@ -192,14 +198,22 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		sceneController.setThisFramePressed('W');
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		sceneController.setThisFramePressed('S');
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		sceneController.setThisFramePressed('A');
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+		sceneController.setThisFramePressed('D');
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS ||
 		glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||

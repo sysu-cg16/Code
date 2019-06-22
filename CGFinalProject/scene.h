@@ -1,7 +1,7 @@
 #ifndef SCENE__H
 #define SCENE__H
 
-#include "character.h"
+#include "spirit.h"
 #include <vector>
 
 class Scene
@@ -11,7 +11,7 @@ public:
 	void Draw(Shader shader, float time);
 	void addCharacter(std::string Path, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3 angles = glm::vec3(0.0f, 0.0f, 0.0f));
 private:
-	vector<Character*> allCharacters;
+	vector<Spirit*> allCharacters;
 };
 
 void Scene::Draw(Shader shader, float time)
@@ -23,7 +23,7 @@ void Scene::Draw(Shader shader, float time)
 
 void Scene::addCharacter(std::string Path, glm::vec3 position, glm::vec3 scale, glm::vec3 angles)
 {
-	allCharacters.push_back(new Character(Path, position, scale, angles));
+	allCharacters.push_back(new Spirit(Path, position, scale, angles));
 }
 
 Scene::~Scene() {

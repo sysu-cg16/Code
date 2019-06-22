@@ -1,5 +1,5 @@
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#ifndef SPIRIT_H
+#define SPIRIT_H
 #include<string>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,11 +11,11 @@
 
 #include "AnimatedModel.h"
 
-class Character
+class Spirit
 {
 public:
-	Character(std::string Path, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3 angles = glm::vec3(0.0f, 0.0f, 0.0f))
-	: characterModel(("resources/" + Path).data()) {
+	Spirit(std::string Path, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3 angles = glm::vec3(0.0f, 0.0f, 0.0f))
+	: spiritModel(("resources/" + Path).data()) {
 		this->position = position;
 		this->angles = angles;
 		this->scale = scale;
@@ -33,8 +33,8 @@ public:
 		model = glm::scale(model, scale);
 		shader.setMat4("model", model);
 
-		characterModel.Draw(shader, time);
-		//characterModel.Draw(shader);
+		spiritModel.Draw(shader, time);
+		//spiritModel.Draw(shader);
 	}
 
 	glm::vec3 position;
@@ -43,10 +43,10 @@ public:
 	glm::vec3 angles2;
 private:
 
-	AnimatedModel characterModel;
+	AnimatedModel spiritModel;
 };
 
-#endif // !CHARACTER_H
+#endif // !SPIRIT_H
 
 
 

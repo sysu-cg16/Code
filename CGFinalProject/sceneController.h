@@ -3,21 +3,25 @@
 
 #include "scene.h"
 #include <vector>
+#include "fontRender.h"
 
 class SceneController
 {
+DISALLOW_COPY_AND_ASSIGN(SceneController)
 public:
 	SceneController();
 	~SceneController();
 	void Draw(Shader shader, float time);
 	void init();
 	float blackHoleSensitivity;
-	Character* forwardBlackHole;
-	Character* backwardBlackHole;
-	Character* viewPlane;
+	Spirit* forwardBlackHole;
+	Spirit* backwardBlackHole;
+	Spirit* viewPlane;
 	void sceneChangeDetector();
+	void setThisFramePressed(const char pressed);
 	unsigned int depthMapFBO;
 	unsigned int depthMap;
+
 private:
 	void initDepthMapFBO();
 	void initScenePast();
@@ -27,13 +31,21 @@ private:
 	bool isForwardShow;
 	bool isBackwardShow;
 	bool blackHoleDistancePreEstimate(const glm::vec3& holePos) const;
+
+	// ç”¨äºŽå½“å‰æŒ‰é’®æ˜¾ç¤º
+	FontRender* fontRender;
+	char thisFramePressed;
+	bool isPressedThisFrame;
 };
 
 inline void SceneController::init()
 {
-	forwardBlackHole = new Character("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	backwardBlackHole = new Character("BlackHole.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	viewPlane = new Character("spaceship3.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
+	isPressedThisFrame = false;
+	fontRender = FontRender::getInstance();
+	forwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
+	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
+	viewPlane = new Spirit("spaceship.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(285.0f, 0.0f, 182.0f));
+
 	sceneIndex = 0;
 	isForwardShow = false;
 	isBackwardShow = false;
@@ -59,11 +71,16 @@ void SceneController::Draw(Shader shader, float time)
 	if(isBackwardShow)
 		backwardBlackHole->Draw(shader, time);
 
-	//// µ÷ÊÔÓÃ
+	//// è°ƒè¯•ç”¨
 	//forwardBlackHole->Draw(shader, time);
 
 	allScenes[sceneIndex]->Draw(shader, time);
 	viewPlane->Draw(shader, time);
+
+	if (isPressedThisFrame) {
+		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+		isPressedThisFrame = false;
+	}
 }
 
 SceneController::SceneController()
@@ -81,10 +98,15 @@ SceneController::~SceneController()
 	}
 }
 
+void SceneController::setThisFramePressed(const char pressed) {
+	isPressedThisFrame = true;
+	thisFramePressed = pressed;
+}
+
 void SceneController::sceneChangeDetector()
 {
 	float dis;
-	// ¼ÆËãÏûºÄ´ó£¬ÏÈ´ÖÂÔÅÐ¶Ï
+	// è®¡ç®—æ¶ˆè€—å¤§ï¼Œå…ˆç²—ç•¥åˆ¤æ–­
 	if (isForwardShow && blackHoleDistancePreEstimate(forwardBlackHole->position)) {
 		dis = distanceOfPositions(viewPlane->position, forwardBlackHole->position);
 		//printf("forwardHole dis: %f\n\n", dis);

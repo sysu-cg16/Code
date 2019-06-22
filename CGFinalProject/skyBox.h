@@ -13,6 +13,7 @@ using std::string;
 
 class SkyBox
 {
+DISALLOW_COPY_AND_ASSIGN(SkyBox)
 public:
 	SkyBox(Camera* camera,
 		const string& PosXFilename = "resources/skyBox/sp3right.jpg",
