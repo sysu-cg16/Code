@@ -28,6 +28,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
+void changePlanePos();
+void changePlaneInitAng(float xoffset, float yoffset, bool reset = false);
 void showGui();
 void getDepthMap(Shader &depthShader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
 void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
@@ -48,7 +50,7 @@ float lastFrame = 0.0f;
 // lighting
 float lightPos[] = { -80.0f, 407.0f, 230.0f };
 float lightPan = 1000;
-
+glm::vec3 viewPlaneInitAng(253.0f, 180.0f, 0.0f);
 
 SceneController sceneController;
 
@@ -127,7 +129,7 @@ int main()
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
-    glfwGetWindowSize(window, (int*)&SCR_WIDTH, (int*)&SCR_HEIGHT);
+		glfwGetWindowSize(window, (int*)&SCR_WIDTH, (int*)&SCR_HEIGHT);
 		// per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
@@ -160,6 +162,8 @@ int main()
 	
 		// 2. render scene as normal using the generated depth/shadow map  
 		// --------------------------------------------------------------
+		changePlaneInitAng(0, 0, true);
+		changePlanePos();
 		showScence(shader, currentFrame, lightSpaceMatrix);
 	
 		// show depthMap
@@ -211,11 +215,8 @@ void processInput(GLFWwindow *window)
 		glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
 		glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS ||
 		glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
-		sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
-		sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
 		sceneController.sceneChangeDetector();
-}
+	}
 
 
 
@@ -259,14 +260,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
+	changePlaneInitAng(xoffset, yoffset);
 	camera.ProcessMouseMovement(xoffset, yoffset);
-
-	sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
-	sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
-	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
-	sceneController.viewPlane->angles2.x = camera.Pitch;
-	sceneController.viewPlane->angles2.y = -90 - camera.Yaw;
-	
 	sceneController.sceneChangeDetector();
 }
 
@@ -288,8 +283,8 @@ void showGui() {
 	//ImGui::InputFloat3("lightPos", lightPos, 2);
 	ImGui::InputFloat("lightPan", &lightPan, 2);
 	//ImGui::SliderFloat3("planePos", (float*)&(sceneController.viewPlane->position), -10, 10);
-	//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
-	//ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
+	ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
+	ImGui::SliderFloat3("planeRota2", (float*)&(sceneController.viewPlane->angles2), 0, 360);
 
 	/*ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
 	ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
@@ -299,6 +294,43 @@ void showGui() {
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void changePlanePos() {
+	sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
+	sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
+	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
+	sceneController.viewPlane->angles.x = viewPlaneInitAng.x - camera.Pitch;
+	sceneController.viewPlane->angles.y = viewPlaneInitAng.y - 90 - camera.Yaw;
+}
+
+void changePlaneInitAng(float xoffset, float yoffset, bool reset) {
+	if (reset) {
+		if (!isFloatEqual(viewPlaneInitAng.x, 253.0f))
+			viewPlaneInitAng.x += viewPlaneInitAng.x < 253.0f ? 1 : -1;
+		if (!isFloatEqual(viewPlaneInitAng.y, 180.0f))
+			viewPlaneInitAng.y += viewPlaneInitAng.y < 180.0f ? 1 : -1;
+	}
+
+	else {
+		if (yoffset > 0) {
+			if (viewPlaneInitAng.x > 240.0f)
+				viewPlaneInitAng.x -= 2;
+		}
+		else if (yoffset < 0) {
+			if (viewPlaneInitAng.x < 285.0f)
+				viewPlaneInitAng.x += 2;
+		}
+
+		if (xoffset > 0) {
+			if (viewPlaneInitAng.y > 155.0f)
+				viewPlaneInitAng.y -= 2;
+		}
+		else if (xoffset < 0) {
+			if (viewPlaneInitAng.y < 205.0f)
+				viewPlaneInitAng.y += 2;
+		}
+	}
 }
 
 void getDepthMap(Shader &depthShader, float &currentFrame, glm::mat4 &lightSpaceMatrix) {
