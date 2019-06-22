@@ -57,6 +57,7 @@ inline void SceneController::init()
 
 void SceneController::Draw(Shader shader, float time)
 {
+
 	if (sceneIndex != 0)
 		isBackwardShow = true;
 	else
@@ -71,15 +72,17 @@ void SceneController::Draw(Shader shader, float time)
 	if(isBackwardShow)
 		backwardBlackHole->Draw(shader, time);
 
-	//// 调试用
-	//forwardBlackHole->Draw(shader, time);
-
 	allScenes[sceneIndex]->Draw(shader, time);
 	viewPlane->Draw(shader, time);
 
 	if (isPressedThisFrame) {
-		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		isPressedThisFrame = false;
+		static uint count = 0;
+		count++;
+		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(1.0f, 1.0f, 0.5f));
+		if (count > 20) {
+			isPressedThisFrame = false;
+			count = 0;
+		}
 	}
 }
 
@@ -129,10 +132,10 @@ void SceneController::sceneChangeDetector()
 inline void SceneController::initScenePast()
 {
 	allScenes.push_back(new Scene());
-	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
-	//allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("past_1000.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
-		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	//allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	//allScenes.back()->addCharacter("past_1000.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
+		//glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 inline void SceneController::initSceneNow()
 {

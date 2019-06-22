@@ -22,6 +22,7 @@ public:
 		this->angles2 = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
 	void Draw(Shader shader, float time) {
+		shader.use();
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, position);
 		model = glm::rotate(model, glm::radians(angles2.z), glm::vec3(0.0f, 0.0f, 1.0f));

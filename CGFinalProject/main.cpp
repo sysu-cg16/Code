@@ -89,13 +89,13 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-  // ��������Ļ��
+  // 启用混合
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
 	// build and compile our shader zprogram
 	// ------------------------------------
-  Shader shader("animatedModel.vs", "animatedModel.fs");
+	Shader shader("animatedModel.vs", "animatedModel.fs");
 	Shader depthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 	Shader debugDepthQuad("debug_shadow_mapping.vs", "debug_shadow_mapping.fs");
 	
@@ -114,18 +114,6 @@ int main()
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
-
-	// init variable
-	// ------------------------------
-	vector<Character*> allCharacters;
-	// now 
-	//Character now_map("resources/now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	//Character now_upper_half("resources/now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-	//Character now_lower_half("resources/now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
-
-	//allCharacters.push_back(&now_map);
-	//allCharacters.push_back(&now_upper_half);
-	//allCharacters.push_back(&now_lower_half);
 
 	camera.MovementSpeed = 50.0f;
 	sceneController.init();
@@ -166,15 +154,14 @@ int main()
 		// 1. render depth of scene to texture (from light's perspective)
 		// --------------------------------------------------------------
 		getDepthMap(depthShader, currentFrame, lightSpaceMatrix);
-	
+		
+		skyBox.Draw();
 		// 2. render scene as normal using the generated depth/shadow map  
 		// --------------------------------------------------------------
 		showScence(shader, currentFrame, lightSpaceMatrix);
 	
 		// show depthMap
 		///shouDepthMap(debugDepthQuad);
-
-		skyBox.Draw();
     
   #ifdef IMGUI_TEST
 		showGui();
@@ -342,11 +329,13 @@ void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix
 	shader.setMat4("view", view);
 	shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-	shader.setFloat("material.shininess", 32.0f);
+	//shader.setFloat("material.shininess", 32.0f);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sceneController.depthMap);
 	sceneController.Draw(shader, currentFrame);
+
+	//FontRender::getInstance()->RenderCharacter('W', 25.0f, 25.0f, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void shouDepthMap(Shader &debugDepthQuad) {
