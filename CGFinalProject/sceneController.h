@@ -46,13 +46,14 @@ inline void SceneController::init()
 	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f, 220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
 	viewPlane = new Spirit("Eagle.fbx", glm::vec3(0.0f, 50.0f, 0.0f), glm::vec3(0.002f, 0.002f, 0.002f), glm::vec3(253.0f, 180.0f, 0.0f));
 
+
 	sceneIndex = 0;
 	isForwardShow = false;
 	isBackwardShow = false;
 
 	initDepthMapFBO();
-	initScenePast();
-//	initSceneNow();
+	//initScenePast();
+	initSceneNow();
 }
 
 void SceneController::Draw(Shader shader, float time)
@@ -112,6 +113,7 @@ void SceneController::sceneChangeDetector()
 		//printf("forwardHole dis: %f\n\n", dis);
 		if (dis < blackHoleSensitivity) {
 			sceneIndex++;
+			viewPlane->position = glm::vec3(0.0f, 50.0f, 0.0f);
 		}
 	}
 	if (isBackwardShow && blackHoleDistancePreEstimate(backwardBlackHole->position)) {
@@ -119,9 +121,9 @@ void SceneController::sceneChangeDetector()
 		//printf("backwardHole dis: %f\n\n", dis);
 		if (dis < blackHoleSensitivity) {
 			sceneIndex--;
+			viewPlane->position = glm::vec3(0.0f, 50.0f, 0.0f);
 		}
 	}
-	viewPlane->position = glm::vec3(0.0f, 50.0f, 0.0f);
 	//printf("hole pos: %f %f %f\n", forwardBlackHole->position.x, forwardBlackHole->position.y, forwardBlackHole->position.z);
 	//printf("plane pos: %f %f %f\n", viewPlane->position.x, viewPlane->position.y, viewPlane->position.z);
 	//dis = distanceOfPositions(viewPlane->position, forwardBlackHole->position);
@@ -138,11 +140,13 @@ inline void SceneController::initScenePast()
 inline void SceneController::initSceneNow()
 {
 	allScenes.push_back(new Scene());
-	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
-
-	allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("now_upper_half_v1.fbx", glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("now_lower_half_v1.fbx", glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+	allScenes.back()->addCharacter("nowSence/now_walking_people.fbx", glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.005f, 0.005f, 0.005f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("nowSence/now_stay_people.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("nowSence/now_map_v1.fbx", glm::vec3(0.0f, 2.0f, -1.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("nowSence/now_cars_upper.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.59f, 1.59f, 1.59f), glm::vec3(90.0f, 270.0f, 180.0f));
+	allScenes.back()->addCharacter("nowSence/now_cars_lower.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.096f, 2.096f, 2.096f), glm::vec3(-90.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("nowSence/now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("nowSence/now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 90.0f, 0.0f));
 }
 
 bool SceneController::blackHoleDistancePreEstimate(const glm::vec3& holePos) const {

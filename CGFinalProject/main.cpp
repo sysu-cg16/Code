@@ -33,7 +33,7 @@ void changePlaneInitAng(float xoffset, float yoffset, bool reset = false);
 void showGui();
 void getDepthMap(Shader &depthShader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
 void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
-void shouDepthMap(Shader &debugDepthQuad);
+void showDepthMap(Shader &debugDepthQuad);
 void renderQuad();
 
 // camera
@@ -67,6 +67,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	// glfw window creation
 	// --------------------
@@ -97,6 +98,7 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	// 文字开启混合
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -125,7 +127,7 @@ int main()
 
 	// init variable
 	// ------------------------------
-	camera.MovementSpeed = 200.0f;
+	camera.MovementSpeed = 100.0f;
 	sceneController.init();
 	SkyBox skyBox(&camera);
 	skyBox.init();
@@ -147,6 +149,9 @@ int main()
 		// input
 		// -----
 		processInput(window);
+		changePlaneInitAng(0, 0, true);
+		changePlanePos();
+		sceneController.sceneChangeDetector();
 
 		// render
 		// ------
@@ -167,20 +172,19 @@ int main()
 	
 		// 2. render scene as normal using the generated depth/shadow map  
 		// --------------------------------------------------------------
-		changePlaneInitAng(0, 0, true);
-		changePlanePos();
 		showScence(shader, currentFrame, lightSpaceMatrix);
-		sceneController.sceneChangeDetector();
 
-		// show depthMap
-#ifdef DEPTHMAP_TEST
-		shouDepthMap(debugDepthQuad);
-#endif
 		skyBox.Draw();
+
+		
+#ifdef DEPTHMAP_TEST
+		showDepthMap(debugDepthQuad);
+#endif  // DEPTHMAP_TEST
     
  #ifdef IMGUI_TEST
 		showGui();
  #endif // IMGUI_TEST
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
@@ -223,15 +227,26 @@ void processInput(GLFWwindow *window)
 		glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !gammaKeyPressed)
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && !gammaKeyPressed)
 	{
 		gammaEnabled = !gammaEnabled;
 		gammaKeyPressed = true;
 	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE)
 	{
 		gammaKeyPressed = false;
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		glEnable(GL_MULTISAMPLE);
+	}
+	
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		glDisable(GL_MULTISAMPLE);
+	}
+
 
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 		glfwSetCursorPosCallback(window, NULL);
@@ -368,7 +383,7 @@ void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix
 	shader.setVec3("light.direction", -lightPos[0], -lightPos[1], -lightPos[2]);
 	shader.setVec3("viewPos", camera.Position);
 
-	shader.setVec3("light.ambient", 1.0f, 1.0f, 1.0f);
+	shader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
 	shader.setVec3("light.diffuse", 1.0f, 1.0f, 1.0f);
 	shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
@@ -384,7 +399,7 @@ void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix
 	sceneController.Draw(shader, currentFrame);
 }
 
-void shouDepthMap(Shader &debugDepthQuad) {
+void showDepthMap(Shader &debugDepthQuad) {
 	debugDepthQuad.use();
 	debugDepthQuad.setInt("depthMap", 0);
 	debugDepthQuad.setFloat("near_plane", 0.1f);
