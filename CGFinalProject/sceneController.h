@@ -43,8 +43,8 @@ inline void SceneController::init()
 	isPressedThisFrame = false;
 	fontRender = FontRender::getInstance();
 	forwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	viewPlane = new Spirit("spaceship.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(253.0f, 180.0f, 0.0f));
+	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f, 220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
+	viewPlane = new Spirit("Eagle.fbx", glm::vec3(0.0f, 50.0f, 0.0f), glm::vec3(0.002f, 0.002f, 0.002f), glm::vec3(253.0f, 180.0f, 0.0f));
 
 	sceneIndex = 0;
 	isForwardShow = false;
@@ -52,7 +52,7 @@ inline void SceneController::init()
 
 	initDepthMapFBO();
 	initScenePast();
-	//initSceneNow();
+//	initSceneNow();
 }
 
 void SceneController::Draw(Shader shader, float time)
@@ -121,6 +121,7 @@ void SceneController::sceneChangeDetector()
 			sceneIndex--;
 		}
 	}
+	viewPlane->position = glm::vec3(0.0f, 50.0f, 0.0f);
 	//printf("hole pos: %f %f %f\n", forwardBlackHole->position.x, forwardBlackHole->position.y, forwardBlackHole->position.z);
 	//printf("plane pos: %f %f %f\n", viewPlane->position.x, viewPlane->position.y, viewPlane->position.z);
 	//dis = distanceOfPositions(viewPlane->position, forwardBlackHole->position);
@@ -140,8 +141,8 @@ inline void SceneController::initSceneNow()
 	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 	allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+	allScenes.back()->addCharacter("now_upper_half_v1.fbx", glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("now_lower_half_v1.fbx", glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
 }
 
 bool SceneController::blackHoleDistancePreEstimate(const glm::vec3& holePos) const {

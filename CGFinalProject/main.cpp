@@ -50,7 +50,12 @@ float lastFrame = 0.0f;
 // lighting
 float lightPos[] = { -80.0f, 407.0f, 230.0f };
 float lightPan = 1000;
-glm::vec3 viewPlaneInitAng(253.0f, 180.0f, 0.0f);
+float defaultViewPlaneInitAng[] = { 35.f, 0.0f, 0.0f };
+glm::vec3 viewPlaneInitAng(defaultViewPlaneInitAng[0], defaultViewPlaneInitAng[1], defaultViewPlaneInitAng[2]);
+
+// gamma
+bool gammaEnabled = false;
+bool gammaKeyPressed = false;
 
 SceneController sceneController;
 
@@ -165,7 +170,8 @@ int main()
 		changePlaneInitAng(0, 0, true);
 		changePlanePos();
 		showScence(shader, currentFrame, lightSpaceMatrix);
-	
+		sceneController.sceneChangeDetector();
+
 		// show depthMap
 #ifdef DEPTHMAP_TEST
 		shouDepthMap(debugDepthQuad);
@@ -215,10 +221,17 @@ void processInput(GLFWwindow *window)
 		glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
 		glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS ||
 		glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		sceneController.sceneChangeDetector();
 	}
 
-
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !gammaKeyPressed)
+	{
+		gammaEnabled = !gammaEnabled;
+		gammaKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	{
+		gammaKeyPressed = false;
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 		glfwSetCursorPosCallback(window, NULL);
@@ -262,7 +275,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	changePlaneInitAng(xoffset, yoffset);
 	camera.ProcessMouseMovement(xoffset, yoffset);
-	sceneController.sceneChangeDetector();
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -284,8 +296,8 @@ void showGui() {
 	ImGui::InputFloat("lightPan", &lightPan, 2);
 	//ImGui::SliderFloat3("planePos", (float*)&(sceneController.viewPlane->position), -10, 10);
 	ImGui::SliderFloat3("planeRota", (float*)&(sceneController.viewPlane->angles), 0, 360);
-	ImGui::SliderFloat3("planeRota2", (float*)&(sceneController.viewPlane->angles2), 0, 360);
-
+	ImGui::SliderFloat3("planeRota", (float*)&(viewPlaneInitAng), 0, 360);
+	
 	/*ImGui::SliderFloat3("planeScale", (float*)&(sceneController.viewPlane->scale), 0, 10);
 	ImGui::SliderFloat3("blackPos", (float*)&(sceneController.forwardBlackHole->position), RANGE_START, RANGE_END);
 	ImGui::SliderFloat3("blackRota", (float*)&(sceneController.forwardBlackHole->angles), 0, 360);
@@ -300,34 +312,34 @@ void changePlanePos() {
 	sceneController.viewPlane->position.x = camera.Position.x + 10 * camera.Front.x;
 	sceneController.viewPlane->position.y = camera.Position.y + 10 * camera.Front.y;
 	sceneController.viewPlane->position.z = camera.Position.z + 10 * camera.Front.z;
-	sceneController.viewPlane->angles.x = viewPlaneInitAng.x - camera.Pitch;
+	sceneController.viewPlane->angles.x = viewPlaneInitAng.x + camera.Pitch;
 	sceneController.viewPlane->angles.y = viewPlaneInitAng.y - 90 - camera.Yaw;
 }
 
 void changePlaneInitAng(float xoffset, float yoffset, bool reset) {
 	if (reset) {
-		if (!isFloatEqual(viewPlaneInitAng.x, 253.0f))
-			viewPlaneInitAng.x += viewPlaneInitAng.x < 253.0f ? 1 : -1;
-		if (!isFloatEqual(viewPlaneInitAng.y, 180.0f))
-			viewPlaneInitAng.y += viewPlaneInitAng.y < 180.0f ? 1 : -1;
+		if (!isFloatEqual(viewPlaneInitAng.x, defaultViewPlaneInitAng[0]))
+			viewPlaneInitAng.x += viewPlaneInitAng.x < defaultViewPlaneInitAng[0] ? 1 : -1;
+		if (!isFloatEqual(viewPlaneInitAng.y, defaultViewPlaneInitAng[1]))
+			viewPlaneInitAng.y += viewPlaneInitAng.y < defaultViewPlaneInitAng[1] ? 1 : -1;
 	}
 
 	else {
-		if (yoffset > 0) {
-			if (viewPlaneInitAng.x > 240.0f)
+		if (yoffset < 0) {
+			if (viewPlaneInitAng.x > defaultViewPlaneInitAng[0] - 25.0f)
 				viewPlaneInitAng.x -= 2;
 		}
-		else if (yoffset < 0) {
-			if (viewPlaneInitAng.x < 285.0f)
+		else if (yoffset > 0) {
+			if (viewPlaneInitAng.x < defaultViewPlaneInitAng[0] + 15.0f)
 				viewPlaneInitAng.x += 2;
 		}
 
 		if (xoffset > 0) {
-			if (viewPlaneInitAng.y > 155.0f)
+			if (viewPlaneInitAng.y > defaultViewPlaneInitAng[1]- 25.0f)
 				viewPlaneInitAng.y -= 2;
 		}
 		else if (xoffset < 0) {
-			if (viewPlaneInitAng.y < 205.0f)
+			if (viewPlaneInitAng.y < defaultViewPlaneInitAng[1] + 25.0f)
 				viewPlaneInitAng.y += 2;
 		}
 	}
@@ -351,11 +363,12 @@ void getDepthMap(Shader &depthShader, float &currentFrame, glm::mat4 &lightSpace
 
 void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix) {
 	shader.use();
+	shader.setInt("gamma", gammaEnabled);
 	shader.setInt("shadowMap", 0);
 	shader.setVec3("light.direction", -lightPos[0], -lightPos[1], -lightPos[2]);
 	shader.setVec3("viewPos", camera.Position);
 
-	shader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
+	shader.setVec3("light.ambient", 1.0f, 1.0f, 1.0f);
 	shader.setVec3("light.diffuse", 1.0f, 1.0f, 1.0f);
 	shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
