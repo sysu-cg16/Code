@@ -169,14 +169,14 @@ int main()
 		// 1. render depth of scene to texture (from light's perspective)
 		// --------------------------------------------------------------
 		getDepthMap(depthShader, currentFrame, lightSpaceMatrix);
-	
+		
+		skyBox.Draw();
 		// 2. render scene as normal using the generated depth/shadow map  
 		// --------------------------------------------------------------
 		showScence(shader, currentFrame, lightSpaceMatrix);
 
 		skyBox.Draw();
 
-		
 #ifdef DEPTHMAP_TEST
 		showDepthMap(debugDepthQuad);
 #endif  // DEPTHMAP_TEST
@@ -397,6 +397,8 @@ void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sceneController.depthMap);
 	sceneController.Draw(shader, currentFrame);
+
+	//FontRender::getInstance()->RenderCharacter('W', 25.0f, 25.0f, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void showDepthMap(Shader &debugDepthQuad) {

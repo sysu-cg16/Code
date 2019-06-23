@@ -58,6 +58,7 @@ inline void SceneController::init()
 
 void SceneController::Draw(Shader shader, float time)
 {
+
 	if (sceneIndex != 0)
 		isBackwardShow = true;
 	else
@@ -72,15 +73,17 @@ void SceneController::Draw(Shader shader, float time)
 	if(isBackwardShow)
 		backwardBlackHole->Draw(shader, time);
 
-	//// 调试用
-	//forwardBlackHole->Draw(shader, time);
-
 	allScenes[sceneIndex]->Draw(shader, time);
 	viewPlane->Draw(shader, time);
 
 	if (isPressedThisFrame) {
-		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		isPressedThisFrame = false;
+		static uint count = 0;
+		count++;
+		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(1.0f, 1.0f, 0.5f));
+		if (count > 20) {
+			isPressedThisFrame = false;
+			count = 0;
+		}
 	}
 }
 

@@ -21,6 +21,7 @@ public:
 		this->scale = scale;
 	}
 	void Draw(Shader shader, float time) {
+		shader.use();
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, position);
 		model = glm::rotate(model, glm::radians(angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
