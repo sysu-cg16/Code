@@ -1,0 +1,7 @@
+	allScenes.back()->addCharacter("now_walking_people.fbx", glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.005f, 0.005f, 0.005f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("now_stay_people.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("now_map_v1.fbx", glm::vec3(0.0f, 2.0f, -1.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("now_cars_upper.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.59f, 1.59f, 1.59f), glm::vec3(90.0f, 180.0f, -90.0f));
+	allScenes.back()->addCharacter("now_cars_lower.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.096f, 2.096f, 2.096f), glm::vec3(90.0f, 180.0f, 0.0f));
+	allScenes.back()->addCharacter("now_upper_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("now_lower_half_v1.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 4.0f, 4.0f), glm::vec3(0.0f, 90.0f, 0.0f));
