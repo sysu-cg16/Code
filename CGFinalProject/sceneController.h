@@ -21,6 +21,7 @@ public:
 	void setThisFramePressed(const char pressed);
 	unsigned int depthMapFBO;
 	unsigned int depthMap;
+	Spirit* person;
 
 private:
 	void initDepthMapFBO();
@@ -42,17 +43,16 @@ inline void SceneController::init()
 {
 	isPressedThisFrame = false;
 	fontRender = FontRender::getInstance();
-	forwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f,220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
-	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-300.0f, 220.0f, 450.0f), glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
+	forwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(-50.0f,250.0f, -50.0f), glm::vec3(10.0f, 10.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
+	backwardBlackHole = new Spirit("BlackHole.fbx", glm::vec3(50.0f, 250.0f, 50.0f), glm::vec3(10.0f, 10.0f, 0.0f), glm::vec3(0.0f, 180.0f, 50.0f));
 	viewPlane = new Spirit("Eagle.fbx", glm::vec3(0.0f, 50.0f, 0.0f), glm::vec3(0.002f, 0.002f, 0.002f), glm::vec3(253.0f, 180.0f, 0.0f));
-
 
 	sceneIndex = 0;
 	isForwardShow = false;
 	isBackwardShow = false;
 
 	initDepthMapFBO();
-	//initScenePast();
+	initScenePast();
 	initSceneNow();
 }
 
@@ -116,7 +116,6 @@ void SceneController::sceneChangeDetector()
 		//printf("forwardHole dis: %f\n\n", dis);
 		if (dis < blackHoleSensitivity) {
 			sceneIndex++;
-			viewPlane->position = glm::vec3(0.0f, 50.0f, 0.0f);
 		}
 	}
 	if (isBackwardShow && blackHoleDistancePreEstimate(backwardBlackHole->position)) {
@@ -124,7 +123,6 @@ void SceneController::sceneChangeDetector()
 		//printf("backwardHole dis: %f\n\n", dis);
 		if (dis < blackHoleSensitivity) {
 			sceneIndex--;
-			viewPlane->position = glm::vec3(0.0f, 50.0f, 0.0f);
 		}
 	}
 	//printf("hole pos: %f %f %f\n", forwardBlackHole->position.x, forwardBlackHole->position.y, forwardBlackHole->position.z);
@@ -135,7 +133,6 @@ void SceneController::sceneChangeDetector()
 inline void SceneController::initScenePast()
 {
 	allScenes.push_back(new Scene());
-	allScenes.back()->addCharacter("test.fbx", glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.0f, 0.0f, 0.0f));
 	//allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	allScenes.back()->addCharacter("past_static.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
 		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-90.0f, 0.0f, 0.0f));

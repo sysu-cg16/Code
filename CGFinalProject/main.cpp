@@ -21,7 +21,6 @@
 #include "ogldev_util.h"
 
 #define IMGUI_TEST
-//#define DEPTHMAP_TEST
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -37,7 +36,7 @@ void showDepthMap(Shader &debugDepthQuad);
 void renderQuad();
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera camera(glm::vec3(0.0f, 50.0f, 0.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -48,14 +47,22 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-float lightPos[] = { -80.0f, 407.0f, 230.0f };
-float lightPan = 1000;
+float lightPos[] = { 32.0f, 423.0f, 285.0f };
+float lightPan = 800;
+
+//float lightPos[] = { 57.0f, 262.0f, 141.0f };
+//float lightPan = 550;
+
 float defaultViewPlaneInitAng[] = { 35.f, 0.0f, 0.0f };
 glm::vec3 viewPlaneInitAng(defaultViewPlaneInitAng[0], defaultViewPlaneInitAng[1], defaultViewPlaneInitAng[2]);
 
 // gamma
 bool gammaEnabled = false;
 bool gammaKeyPressed = false;
+
+// depth test
+bool isDepthTest = false;
+bool depthTestKeyPressed = false;
 
 SceneController sceneController;
 
@@ -177,9 +184,7 @@ int main()
 
 		skyBox.Draw();
 
-#ifdef DEPTHMAP_TEST
-		showDepthMap(debugDepthQuad);
-#endif  // DEPTHMAP_TEST
+		if (isDepthTest) showDepthMap(debugDepthQuad);
     
  #ifdef IMGUI_TEST
 		showGui();
@@ -235,6 +240,16 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE)
 	{
 		gammaKeyPressed = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && !depthTestKeyPressed)
+	{
+		isDepthTest = !isDepthTest;
+		depthTestKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
+	{
+		depthTestKeyPressed = false;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
