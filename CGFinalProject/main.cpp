@@ -20,7 +20,7 @@
 
 #include "ogldev_util.h"
 
-#define IMGUI_TEST
+//#define IMGUI_TEST
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);

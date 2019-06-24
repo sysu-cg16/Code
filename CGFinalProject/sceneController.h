@@ -54,7 +54,7 @@ inline void SceneController::init()
 
 	initDepthMapFBO();
 	initScenePast();
-	//initSceneNow();
+	initSceneNow();
 }
 
 void SceneController::Draw(Shader shader, float time)
