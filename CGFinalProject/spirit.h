@@ -19,23 +19,18 @@ public:
 		this->position = position;
 		this->angles = angles;
 		this->scale = scale;
-		this->angles2 = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
 	void Draw(Shader shader, float time) {
 		shader.use();
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, position);
-		model = glm::rotate(model, glm::radians(angles2.z), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::rotate(model, glm::radians(angles2.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(angles2.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(angles.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(angles.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::rotate(model, glm::radians(angles.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(angles.x), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::scale(model, scale);
 		shader.setMat4("model", model);
 
 		spiritModel.Draw(shader, time);
-		//spiritModel.Draw(shader);
 	}
 
 	glm::vec3 position;

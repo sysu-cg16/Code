@@ -38,6 +38,7 @@ extern unsigned int SCR_WIDTH;
 extern unsigned int SCR_HEIGHT;
 extern const unsigned int SHADOW_WIDTH;
 extern const unsigned int SHADOW_HEIGHT;
+bool isFloatEqual(float a, float b);
 
 #define DISALLOW_COPY_AND_ASSIGN(classname) \
 private:                                   \
