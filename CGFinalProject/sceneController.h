@@ -4,6 +4,7 @@
 #include "scene.h"
 #include <vector>
 #include "fontRender.h"
+#include "particle_generator.h"
 
 class SceneController
 {
@@ -21,7 +22,8 @@ public:
 	void setThisFramePressed(const char pressed);
 	unsigned int depthMapFBO;
 	unsigned int depthMap;
-	Spirit* person;
+	bool isForwardShow;
+	bool isBackwardShow;
 
 private:
 	void initDepthMapFBO();
@@ -29,8 +31,6 @@ private:
 	void initSceneNow();
 	vector<Scene*> allScenes;
 	int sceneIndex;
-	bool isForwardShow;
-	bool isBackwardShow;
 	bool blackHoleDistancePreEstimate(const glm::vec3& holePos) const;
 
 	// 用于当前按钮显示
@@ -53,7 +53,7 @@ inline void SceneController::init()
 
 	initDepthMapFBO();
 	initScenePast();
-	initSceneNow();
+	//initSceneNow();
 }
 
 void SceneController::Draw(Shader shader, float time)
@@ -133,9 +133,7 @@ void SceneController::sceneChangeDetector()
 inline void SceneController::initScenePast()
 {
 	allScenes.push_back(new Scene());
-	//allScenes.back()->addCharacter("now_map.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	allScenes.back()->addCharacter("past_static.fbx", glm::vec3(0.0f, 0.0f, 0.0f), 
-		glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+	allScenes.back()->addCharacter("past_static.fbx", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
 }
 inline void SceneController::initSceneNow()
 {

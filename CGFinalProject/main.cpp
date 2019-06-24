@@ -32,6 +32,7 @@ void changePlaneInitAng(float xoffset, float yoffset, bool reset = false);
 void showGui();
 void getDepthMap(Shader &depthShader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
 void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
+void showParticle(Shader &shader);
 void showDepthMap(Shader &debugDepthQuad);
 void renderQuad();
 
@@ -63,6 +64,9 @@ bool gammaKeyPressed = false;
 // depth test
 bool isDepthTest = false;
 bool depthTestKeyPressed = false;
+
+//粒子发射器
+ParticleGenerator   *Particles;
 
 SceneController sceneController;
 
@@ -115,6 +119,15 @@ int main()
 	Shader shader("animatedModel.vs", "animatedModel.fs");
 	Shader depthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 	Shader debugDepthQuad("debug_shadow_mapping.vs", "debug_shadow_mapping.fs");
+	Shader particleShader("particle.vs", "particle.fs");
+
+	//粒子发射器
+	Particles = new ParticleGenerator(
+		particleShader,
+		loadTexture("resources/particle.png"),
+		500
+	);
+
 	
 	// Setup Dear ImGui context
 	// ------------------------------
@@ -181,6 +194,8 @@ int main()
 		// 2. render scene as normal using the generated depth/shadow map  
 		// --------------------------------------------------------------
 		showScence(shader, currentFrame, lightSpaceMatrix);
+
+		showParticle(particleShader);
 
 		skyBox.Draw();
 
@@ -455,4 +470,20 @@ void renderQuad()
 	glBindVertexArray(quadVAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
+}
+
+void showParticle(Shader &shader) {
+	shader.use();
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	shader.setMat4("projection", projection);
+	shader.setMat4("view", view);
+	shader.setFloat("scale", 10.0f);
+	if (sceneController.isForwardShow) {
+		Particles->Update(0.01, *(sceneController.forwardBlackHole), 5, glm::vec3(0.0f));
+	}
+	else if (sceneController.isBackwardShow) {
+		Particles->Update(0.01, *(sceneController.backwardBlackHole), 5, glm::vec3(0.0f));
+	}
+	Particles->Draw();
 }

@@ -148,6 +148,8 @@
     <None Include="fontRender.vs" />
     <None Include="debug_shadow_mapping.fs" />
     <None Include="debug_shadow_mapping.vs" />
+    <None Include="particle.fs" />
+    <None Include="particle.vs" />
     <None Include="shadow_mapping_depth.fs" />
     <None Include="shadow_mapping_depth.vs" />
     <None Include="skyBox.fs" />
@@ -157,6 +159,7 @@
     <ClInclude Include="AnimatedMesh.h" />
     <ClInclude Include="AnimatedModel.h" />
     <ClInclude Include="fontRender.h" />
+    <ClInclude Include="particle_generator.h" />
     <ClInclude Include="spirit.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="scene.h" />
     <ClInclude Include="sceneController.h" />
     <ClInclude Include="skyBox.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
