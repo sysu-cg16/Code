@@ -1,5 +1,7 @@
 # CG-Final Code
 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sysu-cg16/Code/blob/master/LICENSE )
+
 ## 配置
 
 1. 将`lib`,`include`添加到对应的项目属性中，使用相对路径。
