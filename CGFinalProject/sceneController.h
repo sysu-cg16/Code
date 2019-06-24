@@ -36,6 +36,7 @@ private:
 	FontRender* fontRender;
 	char thisFramePressed;
 	bool isPressedThisFrame;
+	unsigned int pressedCount;
 };
 
 inline void SceneController::init()
@@ -77,12 +78,11 @@ void SceneController::Draw(Shader shader, float time)
 	viewPlane->Draw(shader, time);
 
 	if (isPressedThisFrame) {
-		static uint count = 0;
-		count++;
+		pressedCount++;
 		fontRender->RenderCharacter(thisFramePressed, 25.0f, 25.0f, 1.0f, glm::vec3(1.0f, 1.0f, 0.5f));
-		if (count > 20) {
+		if (pressedCount > 20) {
 			isPressedThisFrame = false;
-			count = 0;
+			pressedCount = 0;
 		}
 	}
 }
@@ -104,6 +104,9 @@ SceneController::~SceneController()
 
 void SceneController::setThisFramePressed(const char pressed) {
 	isPressedThisFrame = true;
+	if (thisFramePressed == pressed) {
+		pressedCount = 0;
+	}
 	thisFramePressed = pressed;
 }
 
