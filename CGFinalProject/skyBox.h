@@ -16,12 +16,12 @@ class SkyBox
 DISALLOW_COPY_AND_ASSIGN(SkyBox)
 public:
 	SkyBox(Camera* camera,
-		const string& PosXFilename = "resources/skyBox/sp3right.jpg",
-		const string& NegXFilename = "resources/skyBox/sp3left.jpg",
-		const string& PosYFilename = "resources/skyBox/sp3top.jpg",
-		const string& NegYFilename = "resources/skyBox/sp3bot.jpg",
-		const string& PosZFilename = "resources/skyBox/sp3front.jpg",
-		const string& NegZFilename = "resources/skyBox/sp3back.jpg"
+		const string& PosXFilename = "resources/skyBox/hourglass_rt.png",
+		const string& NegXFilename = "resources/skyBox/hourglass_lf.png",
+		const string& PosYFilename = "resources/skyBox/hourglass_up.png",
+		const string& NegYFilename = "resources/skyBox/hourglass_dn.png",
+		const string& PosZFilename = "resources/skyBox/hourglass_ft.png",
+		const string& NegZFilename = "resources/skyBox/hourglass_bk.png"
 	)
 		:skyModel("resources/skyBox/sphere.obj"),
 		skyBoxShader("skyBox.vs", "skyBox.fs"),
