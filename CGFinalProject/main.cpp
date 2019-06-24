@@ -21,7 +21,6 @@
 #include "ogldev_util.h"
 
 #define IMGUI_TEST
-//#define DEPTHMAP_TEST
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -33,11 +32,12 @@ void changePlaneInitAng(float xoffset, float yoffset, bool reset = false);
 void showGui();
 void getDepthMap(Shader &depthShader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
 void showScence(Shader &shader, float &currentFrame, glm::mat4 &lightSpaceMatrix);
+void showParticle(Shader &shader);
 void showDepthMap(Shader &debugDepthQuad);
 void renderQuad();
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera camera(glm::vec3(0.0f, 50.0f, 0.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -48,14 +48,25 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-float lightPos[] = { -80.0f, 407.0f, 230.0f };
-float lightPan = 1000;
+float lightPos[] = { 32.0f, 423.0f, 285.0f };
+float lightPan = 800;
+
+//float lightPos[] = { 57.0f, 262.0f, 141.0f };
+//float lightPan = 550;
+
 float defaultViewPlaneInitAng[] = { 35.f, 0.0f, 0.0f };
 glm::vec3 viewPlaneInitAng(defaultViewPlaneInitAng[0], defaultViewPlaneInitAng[1], defaultViewPlaneInitAng[2]);
 
 // gamma
 bool gammaEnabled = false;
 bool gammaKeyPressed = false;
+
+// depth test
+bool isDepthTest = false;
+bool depthTestKeyPressed = false;
+
+//粒子发射器
+ParticleGenerator   *Particles;
 
 SceneController sceneController;
 
@@ -108,6 +119,15 @@ int main()
 	Shader shader("animatedModel.vs", "animatedModel.fs");
 	Shader depthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
 	Shader debugDepthQuad("debug_shadow_mapping.vs", "debug_shadow_mapping.fs");
+	Shader particleShader("particle.vs", "particle.fs");
+
+	//粒子发射器
+	Particles = new ParticleGenerator(
+		particleShader,
+		loadTexture("resources/particle.png"),
+		500
+	);
+
 	
 	// Setup Dear ImGui context
 	// ------------------------------
@@ -175,11 +195,11 @@ int main()
 		// --------------------------------------------------------------
 		showScence(shader, currentFrame, lightSpaceMatrix);
 
+		showParticle(particleShader);
+
 		skyBox.Draw();
 
-#ifdef DEPTHMAP_TEST
-		showDepthMap(debugDepthQuad);
-#endif  // DEPTHMAP_TEST
+		if (isDepthTest) showDepthMap(debugDepthQuad);
     
  #ifdef IMGUI_TEST
 		showGui();
@@ -235,6 +255,16 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE)
 	{
 		gammaKeyPressed = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && !depthTestKeyPressed)
+	{
+		isDepthTest = !isDepthTest;
+		depthTestKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
+	{
+		depthTestKeyPressed = false;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
@@ -440,4 +470,20 @@ void renderQuad()
 	glBindVertexArray(quadVAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
+}
+
+void showParticle(Shader &shader) {
+	shader.use();
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	shader.setMat4("projection", projection);
+	shader.setMat4("view", view);
+	shader.setFloat("scale", 10.0f);
+	if (sceneController.isForwardShow) {
+		Particles->Update(0.01, *(sceneController.forwardBlackHole), 5, glm::vec3(0.0f));
+	}
+	else if (sceneController.isBackwardShow) {
+		Particles->Update(0.01, *(sceneController.backwardBlackHole), 5, glm::vec3(0.0f));
+	}
+	Particles->Draw();
 }
