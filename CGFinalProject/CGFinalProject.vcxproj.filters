@@ -95,12 +95,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="4.2.lamp.fs">
-      <Filter>shader</Filter>
-    </None>
-    <None Include="4.2.lamp.vs">
-      <Filter>shader</Filter>
-    </None>
     <None Include="animatedModel.fs">
       <Filter>shader</Filter>
     </None>

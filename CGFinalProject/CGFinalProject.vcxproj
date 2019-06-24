@@ -140,8 +140,6 @@
     <ClCompile Include="std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="4.2.lamp.fs" />
-    <None Include="4.2.lamp.vs" />
     <None Include="animatedModel.fs" />
     <None Include="animatedModel.vs" />
     <None Include="fontRender.fs" />
